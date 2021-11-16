@@ -1,0 +1,352 @@
+{
+	"info": {
+		"_postman_id": "56d83528-4c61-45c0-b395-6740664b87f9",
+		"name": "learning",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "百度",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//查看HttpCode码",
+							"tests[\"接口状态码200\"] = responseCode.code == 200",
+							"",
+							"pm.test(\"响应状态码为200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"//判断请求时间",
+							"tests[\"返回时间小于500毫秒\"] = responseTime < 500;",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"//postman.setEnvironmentVariable(\"code\",pm.response.code)"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"postman.setNextRequest(\"test_创建标签\")"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}",
+					"host": [
+						"{{url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "test0_获得access_token接口",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//console.log(responseBody);",
+							"//提取access_token的值",
+							"var jsValue = JSON .parse(responseBody);",
+							"console.log(jsValue.access_token);",
+							"//把提取的值保存到全局变量 ",
+							"pm.globals.set(\"token0\",jsValue.access_token);",
+							"",
+							"// //状态断言",
+							"pm.test(\"Status code is 200\",function(){",
+							"    pm.response.to.have.status(200);",
+							"})",
+							"// //业务断言",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"access_token\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var code1 = postman.getEnvironmentVariable(\"code\")",
+							"if(code1 == 200){",
+							"    console.log(\"hello world\")",
+							"}else{",
+							"    console.log(\"hehe\")",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx6b11b3efd1cdc290&secret=106a9c6157c4db5f6029918738f9529d",
+					"protocol": "https",
+					"host": [
+						"api",
+						"weixin",
+						"qq",
+						"com"
+					],
+					"path": [
+						"cgi-bin",
+						"token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "client_credential"
+						},
+						{
+							"key": "appid",
+							"value": "wx6b11b3efd1cdc290"
+						},
+						{
+							"key": "secret",
+							"value": "106a9c6157c4db5f6029918738f9529d"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "test_创建标签",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var times = Date.now()",
+							"pm.globals.set(\"times\", times);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// //使用正则表达式提取",
+							"// var flag_id = responseBody.match(new RegExp('\"id\":(.+?),'))[1]",
+							"// console.log(flag_id)",
+							"// pm.globals.set(\"flag_id\", flag_id);",
+							"",
+							"// pm.test(\"Body matches string\", function () {",
+							"//     pm.expect(pm.response.text()).to.include(\"tags\");",
+							"// });",
+							"",
+							"// //业务断言（精确断言）",
+							"// pm.test(\"Body matches string\", function () {",
+							"//     pm.expect(pm.response.text()).to.include(\"5289\"+pm.globals.get(\"times\"));",
+							"// });"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"tag\":{ \n        \"id\":5289,\n        \"name\":\"西安\"\n    }\n}"
+				},
+				"url": {
+					"raw": "https://api.weixin.qq.com/cgi-bin/tags/create?access_token={{token0}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"weixin",
+						"qq",
+						"com"
+					],
+					"path": [
+						"cgi-bin",
+						"tags",
+						"create"
+					],
+					"query": [
+						{
+							"key": "access_token",
+							"value": "{{token0}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "test1_获取公众号已创建的标签",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//八种断言方式，八大元素定位",
+							"pm.test(\"Status code is 200\",function(){",
+							"    pm.response.to.have.status(200);",
+							"})",
+							"//断言返回结果包含一个指定的字符串",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"tags\");",
+							"});",
+							"//对返回的结果作json字段检查",
+							"pm.test(\"Your test name\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.tags[1].id).to.eql(5298);",
+							"});",
+							"//断言返回的结果等于一个字符串",
+							"// pm.test(\"Body is correct\", function () {",
+							"//     pm.response.to.have.body(\"response_body_string\");",
+							"// });",
+							"//断言响应头中包含指定的响应头",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"//断言请求接口的时间少于200ms",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"//断言一个post请求的返回状态码是否在指定范围里面",
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 202]);",
+							"});",
+							"//断言返回的信息中包含指定的字符串",
+							"pm.test(\"Status code name has string\", function () {",
+							"    pm.response.to.have.status(\"OK\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.weixin.qq.com/cgi-bin/tags/get?access_token={{token0}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"weixin",
+						"qq",
+						"com"
+					],
+					"path": [
+						"cgi-bin",
+						"tags",
+						"get"
+					],
+					"query": [
+						{
+							"key": "access_token",
+							"value": "{{token0}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "test2_删除标签",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"tag\":{\n        \"id\":5289\n    }\n}"
+				},
+				"url": {
+					"raw": "https://api.weixin.qq.com/cgi-bin/tags/delete?access_token={{token0}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"weixin",
+						"qq",
+						"com"
+					],
+					"path": [
+						"cgi-bin",
+						"tags",
+						"delete"
+					],
+					"query": [
+						{
+							"key": "access_token",
+							"value": "{{token0}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "test3_编辑标签",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"tag\":{\n        \"id\":{{flag_id}},\n        \"name\":\"广东人\"\n    }\n}"
+				},
+				"url": {
+					"raw": "https://api.weixin.qq.com/cgi-bin/tags/update?access_token={{token0}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"weixin",
+						"qq",
+						"com"
+					],
+					"path": [
+						"cgi-bin",
+						"tags",
+						"update"
+					],
+					"query": [
+						{
+							"key": "access_token",
+							"value": "{{token0}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
