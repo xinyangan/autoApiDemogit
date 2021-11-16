@@ -1,0 +1,1 @@
+newman run learning.postman_collection.json -e baidu.postman_environment.json -r htmlextra
