@@ -1,7 +1,7 @@
 const newman = require('newman');
 newman.run({
-    collection: require('learning.postman_collection.json'),
-    environment: require('baidu.postman_environment.json'),
+    collection: require('/Users/xinyang.an/.jenkins/workspace/autoApiDemo/learning.postman_collection.json'),
+    environment: require('/Users/xinyang.an/.jenkins/workspace/autoApiDemo/baidu.postman_environment.json'),
     reporters: 'html'
 }, function (err) {
 	if (err) { throw err; }
